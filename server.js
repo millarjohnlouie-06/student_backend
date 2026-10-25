@@ -5,17 +5,18 @@ const cors = require('cors');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Middleware
 app.use(cors());
 app.use(express.json());
 
-// 1. Updated connection string with your exact database name: LabAttendanceDB_Millar
-const MONGO_URI = 'mongodb+srv://millarjohnlouie_db_user:MillaR11062002@cluster0.e0kitq9.mongodb.net/LabAttendanceDB_Millar?retryWrites=true&w=majority';
+// Connect to MongoDB Atlas securely using environment variables
+const MONGO_URI = process.env.MONGO_URI;
 
 mongoose.connect(MONGO_URI)
   .then(() => console.log('Successfully connected to MongoDB Atlas!'))
   .catch(err => console.error('MongoDB connection error:', err));
 
-// 2. Updated schema pointing directly to your 'daily_attendance' collection
+// Define Schema pointing to your 'daily_attendance' collection
 const attendanceSchema = new mongoose.Schema({
   studentId: String,
   studentName: String,
@@ -26,7 +27,7 @@ const attendanceSchema = new mongoose.Schema({
 
 const Attendance = mongoose.model('Attendance', attendanceSchema);
 
-// API Endpoint
+// API Endpoint to fetch attendance records
 app.get('/api/attendance', async (req, res) => {
   try {
     const records = await Attendance.find();
